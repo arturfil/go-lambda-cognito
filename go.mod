@@ -14,6 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.12.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.1 // indirect
 )
 
 require (
