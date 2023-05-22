@@ -17,9 +17,8 @@ func main() {
 	lambda.Start(RunLambda)
 }
 
-func RunLambda(
-ctx context.Context,
-event events.CognitoEventUserPoolsPostConfirmation,) (events.CognitoEventUserPoolsPostConfirmation, error) {
+func RunLambda(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation) (events.CognitoEventUserPoolsPostConfirmation, error) {
+
 	awsgo.AwsInit()
 	if !ValidParams() {
 		fmt.Println("Error: should send 'SecretManager")
@@ -27,27 +26,30 @@ event events.CognitoEventUserPoolsPostConfirmation,) (events.CognitoEventUserPoo
 		return event, err
 	}
 
-    var data models.SignUp
+	var data models.SignUp
 
-    for row, att := range event.Request.UserAttributes {
-        switch row {
-            case "email":
-                data.UserEmail = att
-                fmt.Println("Email = ", data.UserEmail)
-            case "sub":
-                data.UserUUID = att
-                fmt.Println("Sub = ", data.UserUUID)
-        }
-    }
+	for row, att := range event.Request.UserAttributes {
+		switch row {
+		case "email":
+			data.UserEmail = att
+			fmt.Println("Email = ", data.UserEmail)
+		case "sub":
+			data.UserUUID = att
+			fmt.Println("Sub = ", data.UserUUID)
+		}
+	}
 
-    err := db.ReadSecret()
+	err := db.ReadSecret()
+	if err != nil {
+		fmt.Println("Error reading secret", err.Error())
+		return event, err
+	}
+
+	err = db.SignUp(data)
     if err != nil {
-        fmt.Println("Error reading secret", err.Error())
-        return event, err
+        fmt.Println("ERROR -> ", err.Error())
     }
-
-    err = db.SignUp(data)
-    return event, err 
+	return event, err
 }
 
 func ValidParams() bool {

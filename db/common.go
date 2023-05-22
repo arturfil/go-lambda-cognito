@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+    _ "github.com/go-sql-driver/mysql"
 	"github.com/arturfil/go_lambdas/models"
 	secretmanager "github.com/arturfil/go_lambdas/secret_manager"
 )
@@ -19,7 +20,7 @@ func ReadSecret() error {
 }
 
 func DbConnect() error {
-    Db, err := sql.Open("mysql", ConnStr(SecretModel))
+    Db, err = sql.Open("mysql", ConnStr(SecretModel))
     if err != nil {
         fmt.Println(err.Error())
         return err
@@ -40,8 +41,8 @@ func ConnStr(keys models.SecretRDSJson) string {
    dbUser = keys.Username
    authToken = keys.Password
    dbEndpoint = keys.Host
-   dbName = "r2d2db"
-   dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowCleartextPasswords=ture", dbUser, authToken, dbEndpoint, dbName)
+   dbName = "goecommerce"
+   dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?allowCleartextPasswords=true", dbUser, authToken, dbEndpoint, dbName)
    fmt.Println(dsn)
    return dsn
 } 

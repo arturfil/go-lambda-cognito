@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-
+    _ "github.com/go-sql-driver/mysql"
 	"github.com/arturfil/go_lambdas/models"
 	"github.com/arturfil/go_lambdas/tools"
 )
@@ -12,20 +12,27 @@ func SignUp(sign models.SignUp) error {
 
 	err := DbConnect()
 	if err != nil {
+        fmt.Println("ERROR -> ", err.Error())
 		return err
 	}
 
 	defer Db.Close()
 
-	query := "INSERT INTO users (User_Email, User_UUID, User_DateAdd) VALUE ('" + sign.UserEmail + "' , '" + sign.UserUUID + "' '" + tools.MySqlDate() + "')"
-    fmt.Println(query)
+	query := fmt.Sprintf(`
+        INSERT INTO users (User_Email, User_UUID, User_DateAdd) VALUES ('%s' , '%s', '%s')`, 
+        sign.UserEmail, 
+        sign.UserUUID, 
+        tools.MySqlDate(),
+    )
+	fmt.Println(query)
 
-    _, err = Db.Exec(query)
+	_, err = Db.Exec(query)
 
-    if err != nil {
-        fmt.Println(err.Error())
-        return err
-    }
+	if err != nil {
+        fmt.Println("Error with the query")
+		fmt.Println(err.Error())
+		return err
+	}
 
 	return nil
 }
